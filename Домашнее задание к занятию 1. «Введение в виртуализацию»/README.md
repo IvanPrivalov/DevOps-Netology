@@ -9,23 +9,23 @@
 
 1. Создал через web-интерфейс Yandex Cloud - VPC и виртуальную машину, с образом Yandex Cloud Toolbox, из инструкции конфигурации "эконом-ВМ" с публичным ip-адресом. 
 
-<img src="/econom-vm.png" alt="Alt text" title="Обзор вируальная машина">
+<img src="/econom-vm.PNG" alt="Alt text" title="Обзор вируальная машина">
 
 ----
 
-<img src="/econom-vm 2.png" alt="Alt text" title="Вируальная машина">
+<img src="/econom-vm 2.PNG" alt="Alt text" title="Вируальная машина">
 
 2. Подсключился по ssh и проверил что стоит Docker.
 
-<img src="/econom-vm 3.png" alt="Alt text" title="Вируальная машина">
+<img src="/econom-vm 3.PNG" alt="Alt text" title="Вируальная машина">
 
 3. С опцией "прерываемая" виртуальная машина выключилась через 24 часа.
 
-<img src="/econom-vm 4.png" alt="Alt text" title="Вируальная машина выключена">
+<img src="/econom-vm 4.PNG" alt="Alt text" title="Вируальная машина выключена">
 
 4. График потребления финансов за 24 часа.
 
-<img src="/econom-vm 5.png" alt="Alt text" title="Финансы">
+<img src="/econom-vm 5.PNG" alt="Alt text" title="Финансы">
 
 ## Задача 2
 
