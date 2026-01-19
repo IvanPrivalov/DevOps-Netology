@@ -9,7 +9,7 @@
 
 1. Создал через web-интерфейс Yandex Cloud - VPC и виртуальную машину, с образом Yandex Cloud Toolbox, из инструкции конфигурации "эконом-ВМ" с публичным ip-адресом. 
 
-<img src="/econom-vm.PNG" alt="Alt text" title="Обзор вируальная машина">
+<img src="\econom-vm.PNG" alt="Alt text" title="Обзор вируальная машина">
 
 ----
 
