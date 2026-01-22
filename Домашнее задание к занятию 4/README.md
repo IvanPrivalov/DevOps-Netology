@@ -118,8 +118,7 @@ eb5f13bce993: Mounted from library/nginx
 
 
 ```sh
-ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker run -d --name privalovip-custom-nginx-t2 -p
- 127.0.0.1:8080:80 privalovip/custom-nginx:1.0.0
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker run -d --name privalovip-custom-nginx-t2 -p 127.0.0.1:8080:80 privalovip/custom-nginx:1.0.0
 91bc53643e5efa5b965e85c3e525e58a75eb15d65b8ca124086b6f62aaa3effd
 ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker ps -a
 CONTAINER ID   IMAGE                           COMMAND                  CREATED          STATUS          PORTS                    NAMES
@@ -233,3 +232,194 @@ CONTAINER ID   IMAGE                           COMMAND                  CREATED 
 91bc53643e5e   privalovip/custom-nginx:1.0.0   "/docker-entrypoint.…"   26 hours ago   Up 4 seconds   127.0.0.1:8080->80/tcp   custom-nginx-t2
 ```
 
+5. Зайдите в интерактивный терминал контейнера "custom-nginx-t2" с оболочкой bash.
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker exec -it custom-nginx-t2 bash
+root@91bc53643e5e:/# cat /etc/*release
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+```
+
+6. Установите любимый текстовый редактор(vim, nano итд) с помощью apt-get.
+
+```sh
+root@91bc53643e5e:/# apt update
+Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8792 kB]
+Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [292 kB]
+Fetched 9346 kB in 2s (5251 kB/s)                        
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+36 packages can be upgraded. Run 'apt list --upgradable' to see them.
+root@91bc53643e5e:/# apt install nano
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  libgpm2 libncursesw6
+Suggested packages:
+  gpm hunspell
+The following NEW packages will be installed:
+  libgpm2 libncursesw6 nano
+0 upgraded, 3 newly installed, 0 to remove and 36 not upgraded.
+Need to get 838 kB of archives.
+After this operation, 3339 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://deb.debian.org/debian bookworm/main amd64 libncursesw6 amd64 6.4-4 [134 kB]
+Get:2 http://deb.debian.org/debian bookworm/main amd64 nano amd64 7.2-1+deb12u1 [690 kB]
+Get:3 http://deb.debian.org/debian bookworm/main amd64 libgpm2 amd64 1.20.7-10+b1 [14.2 kB]
+Fetched 838 kB in 1s (1663 kB/s)   
+debconf: delaying package configuration, since apt-utils is not installed
+Selecting previously unselected package libncursesw6:amd64.
+(Reading database ... 7582 files and directories currently installed.)
+Preparing to unpack .../libncursesw6_6.4-4_amd64.deb ...
+Unpacking libncursesw6:amd64 (6.4-4) ...
+Selecting previously unselected package nano.
+Preparing to unpack .../nano_7.2-1+deb12u1_amd64.deb ...
+Unpacking nano (7.2-1+deb12u1) ...
+Selecting previously unselected package libgpm2:amd64.
+Preparing to unpack .../libgpm2_1.20.7-10+b1_amd64.deb ...
+Unpacking libgpm2:amd64 (1.20.7-10+b1) ...
+Setting up libgpm2:amd64 (1.20.7-10+b1) ...
+Setting up libncursesw6:amd64 (6.4-4) ...
+Setting up nano (7.2-1+deb12u1) ...
+update-alternatives: using /bin/nano to provide /usr/bin/editor (editor) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/editor.1.gz because associated file /usr/share/man/man1/nano.1.gz (of link group editor) doesn't exist
+update-alternatives: using /bin/nano to provide /usr/bin/pico (pico) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/pico.1.gz because associated file /usr/share/man/man1/nano.1.gz (of link group pico) doesn't exist
+Processing triggers for libc-bin (2.36-9+deb12u10) ...
+root@91bc53643e5e:/# nano --version
+ GNU nano, version 7.2
+ (C) 2023 the Free Software Foundation and various contributors
+ Compiled options: --disable-libmagic --enable-utf8
+```
+
+7. Отредактируйте файл "/etc/nginx/conf.d/default.conf", заменив порт "listen 80" на "listen 81".
+
+```sh
+root@91bc53643e5e:/# cat /etc/nginx/conf.d/default.conf | grep listen
+    listen       81;
+    listen  [::]:81;
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+```
+
+8. Запомните(!) и выполните команду nginx -s reload, а затем внутри контейнера curl http://127.0.0.1:80 ; curl http://127.0.0.1:81.
+
+```sh
+root@91bc53643e5e:/# nginx -s reload
+2026/01/22 13:28:17 [notice] 211#211: signal process started
+root@91bc53643e5e:/# curl http://127.0.0.1:80
+curl: (7) Failed to connect to 127.0.0.1 port 80 after 0 ms: Couldn't connect to server
+root@91bc53643e5e:/# curl http://127.0.0.1:81
+<html>
+
+<head>
+    Hey, Netology
+</head>
+
+<body>
+    <h1>I will be DevOps Engineer!</h1>
+</body>
+```
+
+9. Выйдите из контейнера, набрав в консоли exit или Ctrl-D.
+
+```sh
+root@91bc53643e5e:/# exit
+exit
+ivan@ivan-Otus:Домашнее задание к занятию 4$
+```
+
+10. Проверьте вывод команд: ss -tlpn | grep 127.0.0.1:8080 , docker port custom-nginx-t2, curl http://127.0.0.1:8080. Кратко объясните суть возникшей проблемы.
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 4$ ss -tlpn | grep 127.0.0.1:8080
+LISTEN 0      4096       127.0.0.1:8080      0.0.0.0:*          
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker port custom-nginx-t2
+80/tcp -> 127.0.0.1:8080
+ivan@ivan-Otus:Домашнее задание к занятию 4$ curl http://127.0.0.1:8080
+curl: (56) Recv failure: Connection reset by peer
+```
+
+Суть проблемы в том, что мы изменили порт в /etc/nginx/conf.d/default.conf на 81, а контейнер запущен с параметром связи с 80 портом ```sh sudo docker run -d --name privalovip-custom-nginx-t2 -p 127.0.0.1:8080:80 privalovip/custom-nginx:1.0.0```
+
+11. Это дополнительное, необязательное задание. Попробуйте самостоятельно исправить конфигурацию контейнера, используя доступные источники в интернете. Не изменяйте конфигурацию nginx и не удаляйте контейнер. 
+
+Останавливаем Docker и контейнер
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo systemctl stop docker
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker stop custom-nginx-t2
+custom-nginx-t2
+```
+
+Редактируем файл hostconfig.json и config.v2.json контейнера по пути /var/lib/docker/containers/91bc53643e5efa5b965e85c3e525e58a75eb15d65b8ca124086b6f62aaa3effd/
+
+#### hostconfig.json
+
+```sh
+"PortBindings": {
+        "81/tcp": [
+            {
+                "HostIp": "127.0.0.1",
+                "HostPort": "8080"
+            }
+        ]
+    },
+```
+
+#### config.v2.json
+
+```sh
+"ExposedPorts": {
+            "80/tcp": {},
+            "81/tcp": {}
+        },
+```
+
+Запускаем процесс Docker и контейнер.
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker ps -a
+CONTAINER ID   IMAGE                           COMMAND                  CREATED        STATUS          PORTS                            NAMES
+91bc53643e5e   privalovip/custom-nginx:1.0.0   "/docker-entrypoint.…"   30 hours ago   Up 14 seconds   80/tcp, 127.0.0.1:8080->81/tcp   custom-nginx-t2
+```
+
+Проверяем
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 4$ curl http://127.0.0.1:8080
+<html>
+
+<head>
+    Hey, Netology
+</head>
+
+<body>
+    <h1>I will be DevOps Engineer!</h1>
+</body>
+
+</html>
+```
+
+12. Удалите запущенный контейнер "custom-nginx-t2", не останавливая его.
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker rm -f 91bc53643e5e
+91bc53643e5e
+ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
