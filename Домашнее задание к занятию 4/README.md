@@ -423,3 +423,67 @@ ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker 
 ivan@ivan-Otus:Домашнее задание к занятию 4$ sudo docker ps -a
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
+
+## Задача 4
+
+1. Запустите первый контейнер из образа centos c любым тегом в фоновом режиме, подключив папку текущий рабочий каталог $(pwd) на хостовой машине в /data контейнера, используя ключ -v.
+
+```sh
+ivan@ivan-Otus:data$ docker run -d -t -i -v $(pwd):/data centos:8 /bin/bash
+b427d0afdbbc6a6c24ef910023d29c8875b9485a9325eae39bafac0cfefaf9de
+ivan@ivan-Otus:data$ docker ps -a
+CONTAINER ID   IMAGE      COMMAND       CREATED         STATUS         PORTS     NAMES
+b427d0afdbbc   centos:8   "/bin/bash"   3 seconds ago   Up 2 seconds             modest_leavitt
+```
+
+2. Запустите второй контейнер из образа debian в фоновом режиме, подключив текущий рабочий каталог $(pwd) в /data контейнера.
+
+```sh
+ivan@ivan-Otus:data$ docker run -d -t -i -v $(pwd):/data debian:latest /bin/bash
+Unable to find image 'debian:latest' locally
+latest: Pulling from library/debian
+2ca1bfae7ba8: Pull complete 
+Digest: sha256:5cf544fad978371b3df255b61e209b373583cb88b733475c86e49faa15ac2104
+Status: Downloaded newer image for debian:latest
+5aae9330a86684b8f3c16eef63d9746143c99a6db4b240c5cfca715d17f061df
+ivan@ivan-Otus:data$ docker ps -a
+CONTAINER ID   IMAGE           COMMAND       CREATED          STATUS          PORTS     NAMES
+5aae9330a866   debian:latest   "/bin/bash"   11 seconds ago   Up 11 seconds             happy_grothendieck
+b427d0afdbbc   centos:8        "/bin/bash"   48 minutes ago   Up 48 minutes             modest_leavitt
+```
+
+3. Подключитесь к первому контейнеру с помощью docker exec и создайте текстовый файл любого содержания в /data.
+
+```sh
+ivan@ivan-Otus:data$ docker exec -it modest_leavitt bash
+[root@b427d0afdbbc /]# cd /data/
+[root@b427d0afdbbc data]# touch filefromcentos
+[root@b427d0afdbbc data]# ls
+filefromcentos
+```
+
+4. Добавьте ещё один файл в текущий каталог $(pwd) на хостовой машине.
+
+```sh
+ivan@ivan-Otus:data$ ll
+total 8
+drwxrwxr-x 2 ivan ivan 4096 Jan 23 15:50 ./
+drwxrwxr-x 6 ivan ivan 4096 Jan 23 14:48 ../
+-rw-r--r-- 1 root root    0 Jan 23 15:50 filefromcentos
+ivan@ivan-Otus:data$ touch filefromhost
+ivan@ivan-Otus:data$ ll
+total 8
+drwxrwxr-x 2 ivan ivan 4096 Jan 23 15:51 ./
+drwxrwxr-x 6 ivan ivan 4096 Jan 23 14:48 ../
+-rw-r--r-- 1 root root    0 Jan 23 15:50 filefromcentos
+-rw-rw-r-- 1 ivan ivan    0 Jan 23 15:51 filefromhost
+```
+
+5. Подключитесь во второй контейнер и отобразите листинг и содержание файлов в /data контейнера.
+
+```sh
+ivan@ivan-Otus:data$ docker exec -it happy_grothendieck bash
+root@5aae9330a866:/# cd /data/
+root@5aae9330a866:/data# ls
+filefromcentos  filefromhost
+```
