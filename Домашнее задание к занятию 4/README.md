@@ -487,3 +487,146 @@ root@5aae9330a866:/# cd /data/
 root@5aae9330a866:/data# ls
 filefromcentos  filefromhost
 ```
+
+## Задача 5
+
+1. Создайте отдельную директорию(например /tmp/netology/docker/task5) и 2 файла внутри него "compose.yaml" и "docker-compose.yaml". И выполните команду "docker compose up -d". Какой из файлов был запущен и почему?
+
+```sh
+ivan@ivan-Otus:data$ docker compose up -d
+WARN[0000] Found multiple config files with supported names: /home/ivan/Desktop/DevOps-Netology/data/compose.yaml, /home/ivan/Desktop/DevOps-Netology/data/docker-compose.yaml 
+WARN[0000] Using /home/ivan/Desktop/DevOps-Netology/data/compose.yaml 
+WARN[0000] /home/ivan/Desktop/DevOps-Netology/data/compose.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] up 7/9
+[+] up 10/10tainer/portainer-ce:latest [⣿⣿⣿⣿⣿⣿⣿⣿] 59.49MB / 59.49MB Pulling                                                                                                                 6.1s 
+ ✔ Image portainer/portainer-ce:latest Pulled                                                                                                                                               6.1s 
+   ✔ 09866042805c                      Pull complete                                                                                                                                        0.8s 
+   ✔ 8e6d62697c09                      Pull complete                                                                                                                                        0.8s 
+   ✔ 97d46cc86f33                      Pull complete                                                                                                                                        1.5s 
+   ✔ 1b6da1229ec5                      Pull complete                                                                                                                                        1.6s 
+   ✔ 37dcf0e5163d                      Pull complete                                                                                                                                        3.0s 
+   ✔ 5f39d7b36694                      Pull complete                                                                                                                                        3.3s 
+   ✔ 4dc5fe4c57e2                      Pull complete                                                                                                                                        3.3s 
+   ✔ 4f4fb700ef54                      Pull complete                                                                                                                                        3.3s 
+ ✔ Container data-portainer-1          Created                                                                                                                                              0.2s 
+ivan@ivan-Otus:data$ docker ps -a
+CONTAINER ID   IMAGE                           COMMAND        CREATED         STATUS         PORTS     NAMES
+e26f93ac467e   portainer/portainer-ce:latest   "/portainer"   4 seconds ago   Up 3 seconds             data-portainer-1
+```
+
+Был запущен compose.yaml так как compose.yaml предпочтителен, если в каталоге два файла compose.yaml и docker-compose.yaml, compose выполнит compose.yaml.
+
+2. Отредактируйте файл compose.yaml так, чтобы были запущенны оба файла.
+
+```sh
+include:
+  - docker-compose.yaml
+services:
+  portainer:
+    network_mode: host
+    image: portainer/portainer-ce:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+```
+
+Выполнение compose.yaml
+
+```sh
+ivan@ivan-Otus:data$ docker compose up -d
+WARN[0000] Found multiple config files with supported names: /home/ivan/Desktop/DevOps-Netology/data/compose.yaml, /home/ivan/Desktop/DevOps-Netology/data/docker-compose.yaml 
+WARN[0000] Using /home/ivan/Desktop/DevOps-Netology/data/compose.yaml 
+[+] up 5/6
+[+] up 9/9egistry:2 [⣿⣿⣿⣿⣿] 10.12MB / 10.12MB Pulling                                                                                                                                       4.9s 
+ ✔ Image registry:2           Pulled                                                                                                                                                        4.9s 
+   ✔ 44cf07d57ee4             Pull complete                                                                                                                                                 1.3s 
+   ✔ bbbdd6c6894b             Pull complete                                                                                                                                                 1.5s 
+   ✔ 8e82f80af0de             Pull complete                                                                                                                                                 1.6s 
+   ✔ 3493bf46cdec             Pull complete                                                                                                                                                 1.9s 
+   ✔ 6d464ea18732             Pull complete                                                                                                                                                 2.1s 
+ ✔ Network data_default       Created                                                                                                                                                       0.0s 
+ ✔ Container data-registry-1  Created                                                                                                                                                       0.1s 
+ ✔ Container data-portainer-1 Created                                                                                                                                                       0.1s 
+ivan@ivan-Otus:data$ docker ps -a
+CONTAINER ID   IMAGE                           COMMAND                  CREATED         STATUS         PORTS                                         NAMES
+beb8c9089444   portainer/portainer-ce:latest   "/portainer"             9 seconds ago   Up 8 seconds                                                 data-portainer-1
+deb7ebdd7068   registry:2                      "/entrypoint.sh /etc…"   9 seconds ago   Up 8 seconds   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp   data-registry-1
+```
+
+3. Выполните в консоли вашей хостовой ОС необходимые команды чтобы залить образ custom-nginx как custom-nginx:latest в запущенное вами, локальное registry.
+
+```sh
+ivan@ivan-Otus:data$ docker tag privalovip/custom-nginx:1.0.0 localhost:5000/custom-nginx:latest
+ivan@ivan-Otus:data$ docker push localhost:5000/custom-nginx:latest
+The push refers to repository [localhost:5000/custom-nginx]
+3ff0d41a5c24: Pushed 
+7ed7e794490f: Pushed 
+e0b314409d08: Pushed 
+2e174fd56089: Pushed 
+727839498dfa: Pushed 
+508937af8963: Pushed 
+e9b5d470f331: Pushed 
+5e1b8f458cec: Pushed 
+d89e58119fc7: Pushed 
+eb5f13bce993: Pushed 
+latest: digest: sha256:683168320de76558e958f7ebb13b4e919846ab37e6fe87e3a44245c58c4c8653 size: 2399
+ivan@ivan-Otus:data$ docker images
+                                                                                                                                                                             i Info →   U  In Use
+IMAGE                                ID             DISK USAGE   CONTENT SIZE   EXTRA
+centos:7                             eeb6ee3f44bd        204MB             0B        
+centos:8                             5d0da3dc9764        231MB             0B        
+debian:latest                        29d02fa8f9f4        120MB             0B        
+localhost:5000/custom-nginx:latest   7f2780f7285d        192MB             0B        
+nginx:1.29.0                         7a073be66c4c        192MB             0B        
+portainer/portainer-ce:latest        2622931a6f42        184MB             0B    U   
+privalovip/custom-nginx:1.0.0        7f2780f7285d        192MB             0B        
+registry:2                           26b2eb03618e       25.4MB             0B    U   
+```
+
+4. Откройте страницу "https://127.0.0.1:9000" и произведите начальную настройку portainer.
+
+<img src="\image 3.png" alt="Alt text" title="portainer">
+
+5. Откройте страницу "http://127.0.0.1:9000/#!/home", выберите ваше local окружение. Перейдите на вкладку "stacks" и в "web editor" задеплойте следующий компоуз:
+
+```sh
+version: '3'
+
+services:
+  nginx:
+    image: 127.0.0.1:5000/custom-nginx
+    ports:
+      - "9090:80"
+```
+
+<img src="\image 4.png" alt="Alt text" title="stacks">
+
+<img src="\image 5.png" alt="Alt text" title="stacks">
+
+6. Перейдите на страницу "http://127.0.0.1:9000/#!/2/docker/containers", выберите контейнер с nginx и нажмите на кнопку "inspect". В представлении <> Tree разверните поле "Config" и сделайте скриншот от поля "AppArmorProfile" до "Driver".
+
+<img src="\image 6.png" alt="Alt text" title="stacks">
+
+7. Удалите любой из манифестов компоуза(например compose.yaml). Выполните команду "docker compose up -d". Прочитайте warning, объясните суть предупреждения и выполните предложенное действие. Погасите compose-проект ОДНОЙ(обязательно!!) командой.
+
+```sh
+ivan@ivan-Otus:data$ docker compose up -d
+WARN[0000] No services to build                         
+WARN[0000] Found orphan containers ([data-portainer-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up. 
+[+] up 1/1
+ ✔ Container data-registry-1 Running  
+
+ivan@ivan-Otus:data$ docker compose up -d --remove-orphans
+WARN[0000] No services to build                         
+[+] up 2/2
+ ✔ Container data-portainer-1 Removed                                                                                                                                                       0.1s 
+ ✔ Container data-registry-1  Running                                                                                                                                                       0.0s 
+ivan@ivan-Otus:data$ docker ps -a
+CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+71e25ab312fc   127.0.0.1:5000/custom-nginx   "/docker-entrypoint.…"   13 minutes ago   Up 13 minutes   0.0.0.0:9090->80/tcp, [::]:9090->80/tcp       nginx-nginx-1
+deb7ebdd7068   registry:2                    "/entrypoint.sh /etc…"   39 minutes ago   Up 39 minutes   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp   data-registry-1
+
+ivan@ivan-Otus:data$ docker compose down --remove-orphans
+[+] down 2/2
+ ✔ Container data-registry-1 Removed                                                                                                                                                        0.2s 
+ ✔ Network data_default      Removed   
+```
