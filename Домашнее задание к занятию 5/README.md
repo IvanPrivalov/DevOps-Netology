@@ -124,3 +124,75 @@ yc container image list-vulnerabilities --scan-result-id=chedi4bv1jlfpkmrgluq
 <img src="screens\image 6.png" alt="Alt text" title="scan">
 
 <img src="screens\image 7.png" alt="Alt text" title="scan">
+
+## Задача 3
+1. Изучите файл "proxy.yaml"
+2. Создайте в репозитории с проектом файл ```compose.yaml```. С помощью директивы "include" подключите к нему файл "proxy.yaml".
+3. Опишите в файле ```compose.yaml``` следующие сервисы: 
+
+- ```web```. Образ приложения должен ИЛИ собираться при запуске compose из файла ```Dockerfile.python``` ИЛИ скачиваться из yandex cloud container registry(из задание №2 со *). Контейнер должен работать в bridge-сети с названием ```backend``` и иметь фиксированный ipv4-адрес ```172.20.0.5```. Сервис должен всегда перезапускаться в случае ошибок.
+Передайте необходимые ENV-переменные для подключения к Mysql базе данных по сетевому имени сервиса ```web``` 
+
+- ```db```. image=mysql:8. Контейнер должен работать в bridge-сети с названием ```backend``` и иметь фиксированный ipv4-адрес ```172.20.0.10```. Явно перезапуск сервиса в случае ошибок. Передайте необходимые ENV-переменные для создания: пароля root пользователя, создания базы данных, пользователя и пароля для web-приложения.Обязательно используйте уже существующий .env file для назначения секретных ENV-переменных!
+
+2. Запустите проект локально с помощью docker compose , добейтесь его стабильной работы: команда ```curl -L http://127.0.0.1:8090``` должна возвращать в качестве ответа время и локальный IP-адрес. Если сервисы не стартуют воспользуйтесь командами: ```docker ps -a ``` и ```docker logs <container_name>``` . Если вместо IP-адреса вы получаете информационную ошибку --убедитесь, что вы шлете запрос на порт ```8090```, а не 5000.
+
+5. Подключитесь к БД mysql с помощью команды ```docker exec -ti <имя_контейнера> mysql -uroot -p<пароль root-пользователя>```(обратите внимание что между ключем -u и логином root нет пробела. это важно!!! тоже самое с паролем) . Введите последовательно команды (не забываем в конце символ ; ): ```show databases; use <имя вашей базы данных(по-умолчанию virtd, как это указано в .env)>; show tables; SELECT * from requests LIMIT 10;```. Примечание: таблица в БД создается после первого поступившего запроса к приложению.
+
+6. Остановите проект. В качестве ответа приложите скриншот sql-запроса.
+
+---
+## Файл compose.yaml доступен [по ссылке](https://github.com/IvanPrivalov/shvirtd-example-python/blob/main/compose.yaml)
+
+---
+
+```sh
+ivan@ivan-Otus:shvirtd-example-python$ docker compose up -d
+WARN[0000] /home/ivan/Desktop/shvirtd-example-python/proxy.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] up 24/24
+ ✔ Image nginx:latest Pulled                                                                                                                                                   11.0s 
+ ✔ Image mysql:8      Pulled                                                                                                                                                   24.3s 
+ ✔ Image haproxy:2.4  Pulled                                                                                                                                                   12.7s 
+[+] Building 6.0s (13/13) FINISHED                                                                                                                                                   
+ => [internal] load local bake definitions                                                                                                                                      0.0s
+ => => reading from stdin 559B                                                                                                                                                  0.0s
+ => [internal] load build definition from Dockerfile.python                                                                                                                     0.0s
+ => => transferring dockerfile: 340B                                                                                                                                            0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim                                                                                                             1.3s
+ => [auth] library/python:pull token for registry-1.docker.io                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                                               0.0s
+ => => transferring context: 166B                                                                                                                                               0.0s
+ => [1/5] FROM docker.io/library/python:3.12-slim@sha256:5e2dbd4bbdd9c0e67412aea9463906f74a22c60f89eb7b5bbb7d45b66a2b68a6                                                       0.0s
+ => [internal] load build context                                                                                                                                               2.3s
+ => => transferring context: 161.78MB                                                                                                                                           2.3s
+ => CACHED [2/5] WORKDIR /app                                                                                                                                                   0.0s
+ => CACHED [3/5] COPY requirements.txt ./                                                                                                                                       0.0s
+ => CACHED [4/5] RUN pip install -r requirements.txt                                                                                                                            0.0s
+ => [5/5] COPY . .                                                                                                                                                              1.5s
+ => exporting to image                                                                                                                                                          0.6s
+[+] up 30/30ting layers                                                                                                                                                         0.6s
+ ✔ Image nginx:latest                               Pulled                                                                                                                     11.0s 
+ ✔ Image mysql:8                                    Pulled                                                                                                                     24.3s 
+ ✔ Image haproxy:2.4                                Pulled                                                                                                                     12.7s 
+ ✔ Image shvirtd-example-python-web                 Built                                                                                                                       6.1s 
+ ✔ Network shvirtd-example-python_backend           Created                                                                                                                     0.1s 
+ ✔ Container shvirtd-example-python-reverse-proxy-1 Created                                                                                                                     0.1s 
+ ✔ Container shvirtd-example-python-ingress-proxy-1 Created                                                                                                                     0.1s 
+ ✔ Container db                                     Healthy                                                                                                                    16.1s 
+ ✔ Container web                                    Created
+                                                                                                                      0.0s 
+ivan@ivan-Otus:shvirtd-example-python$ docker compose ps
+WARN[0000] /home/ivan/Desktop/shvirtd-example-python/proxy.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+NAME                                     IMAGE                        COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+db                                       mysql:8                      "docker-entrypoint.s…"   db              45 seconds ago   Up 44 seconds (healthy)   3306/tcp, 33060/tcp
+shvirtd-example-python-ingress-proxy-1   nginx:latest                 "/docker-entrypoint.…"   ingress-proxy   45 seconds ago   Up 44 seconds             
+shvirtd-example-python-reverse-proxy-1   haproxy:2.4                  "docker-entrypoint.s…"   reverse-proxy   45 seconds ago   Up 44 seconds             127.0.0.1:8080->8080/tcp
+web                                      shvirtd-example-python-web   "uvicorn main:app --…"   web             45 seconds ago   Up 28 seconds  
+
+ivan@ivan-Otus:shvirtd-example-python$ curl -L http://127.0.0.1:8090
+"TIME: 2026-02-02 12:11:31, IP: 127.0.0.1"
+```
+
+<img src="screens\image 8.png" alt="Alt text" title="compose">
+
+<img src="screens\image 9.png" alt="Alt text" title="db">
