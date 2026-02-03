@@ -205,6 +205,8 @@ ivan@ivan-Otus:shvirtd-example-python$ curl -L http://127.0.0.1:8090
 5. (Необязательная часть) Дополнительно настройте remote ssh context к вашему серверу. Отобразите список контекстов и результат удаленного выполнения ```docker ps -a```
 6. Повторите SQL-запрос на сервере и приложите скриншот и ссылку на fork.
 
+## Bash-скрипт deploy.sh доступен [по ссылке](https://github.com/IvanPrivalov/shvirtd-example-python/blob/main/deploy.sh)
+
 <img src="screens\image 10.png" alt="Alt text" title="vm">
 
 <img src="screens\image 11.png" alt="Alt text" title="check">
@@ -212,3 +214,15 @@ ivan@ivan-Otus:shvirtd-example-python$ curl -L http://127.0.0.1:8090
 <img src="screens\image 12.png" alt="Alt text" title="db">
 
 <img src="screens\image 13.png" alt="Alt text" title="db">
+
+## Задача 5 (*)
+1. Напишите и задеплойте на вашу облачную ВМ bash скрипт, который произведет резервное копирование БД mysql в директорию "/opt/backup" с помощью запуска в сети "backend" контейнера из образа ```schnitzler/mysqldump``` при помощи ```docker run ...``` команды. Подсказка: "документация образа."
+2. Протестируйте ручной запуск
+3. Настройте выполнение скрипта раз в 1 минуту через cron, crontab или systemctl timer. Придумайте способ не светить логин/пароль в git!!
+4. Предоставьте скрипт, cron-task и скриншот с несколькими резервными копиями в "/opt/backup"
+
+## Bash-скрипт backup-mysql.sh доступен [по ссылке](https://github.com/IvanPrivalov/shvirtd-example-python/blob/main/backup-mysql.sh)
+
+<img src="screens\image 14.png" alt="Alt text" title="backup">
+
+<img src="screens\image 15.png" alt="Alt text" title="cron">
