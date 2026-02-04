@@ -245,6 +245,113 @@ ivan@ivan-Otus:shvirtd-example-python$ curl -L http://127.0.0.1:8090
 Предложите способ извлечь файл из контейнера, используя только команду docker build и любой Dockerfile.  
 Предоставьте скриншоты  действий .
 
+## Dockerfile доступен [по ссылке](https://github.com/IvanPrivalov/DevOps-Netology/blob/main/%D0%94%D0%BE%D0%BC%D0%B0%D1%88%D0%BD%D0%B5%D0%B5%20%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%BA%20%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8E%205/Dockerfile)
+
+```sh
+ivan@ivan-Otus:Домашнее задание к занятию 5$ docker build --no-cache --progress=plain . 
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 397B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/hashicorp/terraform:latest
+#2 DONE 0.0s
+
+#3 [auth] library/ubuntu:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/library/ubuntu:latest
+#4 DONE 1.1s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 2B done
+#5 DONE 0.0s
+
+#6 [stage_2 1/4] FROM docker.io/library/ubuntu:latest@sha256:cd1dba651b3080c3686ecf4e3c4220f026b521fb76978881737d24f200828b2b
+#6 CACHED
+
+#7 [stage_1 1/1] FROM docker.io/hashicorp/terraform:latest
+#7 CACHED
+
+#8 [stage_2 2/4] RUN apt-get update && apt-get install -y     file     coreutils
+#8 0.391 Get:1 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+#8 0.683 Get:2 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+#8 0.754 Get:3 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+#8 0.834 Get:4 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+#8 0.861 Get:5 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+#8 1.485 Get:6 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+#8 1.485 Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+#8 1.494 Get:8 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1978 kB]
+#8 1.550 Get:9 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [2178 kB]
+#8 1.575 Get:10 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [38.1 kB]
+#8 1.577 Get:11 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [3233 kB]
+#8 1.649 Get:12 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.5 kB]
+#8 1.651 Get:13 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [34.6 kB]
+#8 9.955 Get:14 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+#8 10.33 Get:15 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1199 kB]
+#8 10.66 Get:16 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [3008 kB]
+#8 10.82 Get:17 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1777 kB]
+#8 10.93 Get:18 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [34.8 kB]
+#8 11.01 Fetched 35.7 MB in 11s (3332 kB/s)
+#8 11.01 Reading package lists...
+#8 12.17 Reading package lists...
+#8 13.22 Building dependency tree...
+#8 13.46 Reading state information...
+#8 13.78 coreutils is already the newest version (9.4-3ubuntu6.1).
+#8 13.78 The following additional packages will be installed:
+#8 13.79   libmagic-mgc libmagic1t64
+#8 13.83 The following NEW packages will be installed:
+#8 13.83   file libmagic-mgc libmagic1t64
+#8 14.01 0 upgraded, 3 newly installed, 0 to remove and 3 not upgraded.
+#8 14.01 Need to get 417 kB of archives.
+#8 14.01 After this operation, 8816 kB of additional disk space will be used.
+#8 14.01 Get:1 http://archive.ubuntu.com/ubuntu noble/main amd64 libmagic-mgc amd64 1:5.45-3build1 [307 kB]
+#8 14.43 Get:2 http://archive.ubuntu.com/ubuntu noble/main amd64 libmagic1t64 amd64 1:5.45-3build1 [87.2 kB]
+#8 14.44 Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 file amd64 1:5.45-3build1 [22.0 kB]
+#8 14.60 debconf: delaying package configuration, since apt-utils is not installed
+#8 14.67 Fetched 417 kB in 1s (702 kB/s)
+#8 14.69 Selecting previously unselected package libmagic-mgc.
+(Reading database ... 4381 files and directories currently installed.)
+#8 14.70 Preparing to unpack .../libmagic-mgc_1%3a5.45-3build1_amd64.deb ...
+#8 14.71 Unpacking libmagic-mgc (1:5.45-3build1) ...
+#8 14.82 Selecting previously unselected package libmagic1t64:amd64.
+#8 14.82 Preparing to unpack .../libmagic1t64_1%3a5.45-3build1_amd64.deb ...
+#8 14.82 Unpacking libmagic1t64:amd64 (1:5.45-3build1) ...
+#8 14.88 Selecting previously unselected package file.
+#8 14.88 Preparing to unpack .../file_1%3a5.45-3build1_amd64.deb ...
+#8 14.89 Unpacking file (1:5.45-3build1) ...
+#8 14.93 Setting up libmagic-mgc (1:5.45-3build1) ...
+#8 14.94 Setting up libmagic1t64:amd64 (1:5.45-3build1) ...
+#8 14.99 Setting up file (1:5.45-3build1) ...
+#8 15.00 Processing triggers for libc-bin (2.39-0ubuntu8.6) ...
+#8 DONE 15.9s
+
+#9 [stage_2 3/4] COPY --from=stage_1 /bin/terraform /terraform
+#9 DONE 1.6s
+
+#10 [stage_2 4/4] RUN set -eux;     echo "Files were copied";     ls -lh /terraform;     file /terraform;     chmod +x /terraform;     /terraform version || true;     echo "end"
+#10 0.235 + echo Files were copied
+#10 0.235 + ls -lh /terraform
+#10 0.235 Files were copied
+#10 0.236 -rwxr-xr-x 1 root root 96M Jan 28 10:08 /terraform
+#10 0.236 + file /terraform
+#10 0.250 /terraform: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=796b114e88e1a769a0c8c8aefd0a3e9af24eae89, stripped
+#10 0.250 + chmod +x /terraform
+#10 1.676 + /terraform version
+#10 1.882 Terraform v1.14.4
+#10 1.882 on linux_amd64
+#10 1.886 end
+#10 1.886 + echo end
+#10 DONE 1.9s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.2s done
+#11 writing image sha256:7506062082d13ccb931186dbed5c2a3b7adf739bfe8a0ac5e229242e4b40b01e done
+#11 DONE 0.3s
+```
+
 ## Задача 7 (***)
 Запустите ваше python-приложение с помощью runC, не используя docker или containerd.  
 Предоставьте скриншоты  действий .
