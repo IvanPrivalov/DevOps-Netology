@@ -226,3 +226,25 @@ ivan@ivan-Otus:shvirtd-example-python$ curl -L http://127.0.0.1:8090
 <img src="screens\image 14.png" alt="Alt text" title="backup">
 
 <img src="screens\image 15.png" alt="Alt text" title="cron">
+
+## Задача 6
+Скачайте docker образ ```hashicorp/terraform:latest``` и скопируйте бинарный файл ```/bin/terraform``` на свою локальную машину, используя dive и docker save.
+Предоставьте скриншоты  действий.
+
+<img src="screens\image 16.png" alt="Alt text" title="dive">
+
+<img src="screens\image 17.png" alt="Alt text" title="terraform">
+
+## Задача 6.1
+Добейтесь аналогичного результата, используя docker cp.  
+Предоставьте скриншоты  действий .
+
+<img src="screens\image 18.png" alt="Alt text" title="cp">
+
+## Задача 6.2 (**)
+Предложите способ извлечь файл из контейнера, используя только команду docker build и любой Dockerfile.  
+Предоставьте скриншоты  действий .
+
+## Задача 7 (***)
+Запустите ваше python-приложение с помощью runC, не используя docker или containerd.  
+Предоставьте скриншоты  действий .
