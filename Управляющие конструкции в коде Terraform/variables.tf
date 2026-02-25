@@ -1,6 +1,7 @@
 ###cloud vars
-variable "token" {
+variable "service_account_key_file" {
   type        = string
+  default     = "authorized_key.json"
   description = "OAuth-token; https://cloud.yandex.ru/docs/iam/concepts/authorization/oauth-token"
 }
 
@@ -32,3 +33,25 @@ variable "vpc_name" {
   default     = "develop"
   description = "VPC network&subnet name"
 }
+
+variable "vms_resources" {
+  type = map(object({
+    cores         = number
+    memory        = number
+    core_fraction = number
+    hdd_size      = number
+    hdd_type      = string
+  }))
+}
+
+variable "each_vm" {
+  type = list(object({
+    vm_name       = string
+    cores         = number
+    memory        = number
+    core_fraction = number
+    hdd_size      = number
+    hdd_type      = string
+  }))
+}
+
