@@ -43,16 +43,6 @@ resource "yandex_compute_instance" "platform" {
 }
 
 # vm2 ----------------------------------------------------
-resource "yandex_vpc_network" "develop_vector" {
-  name = var.vpc_name
-}
-resource "yandex_vpc_subnet" "develop_vector" {
-  name           = var.vpc_name
-  zone           = var.default_zone
-  network_id     = yandex_vpc_network.develop.id
-  v4_cidr_blocks = var.default_cidr
-}
-
 data "yandex_compute_image" "ubuntu_vector" {
   family = var.vm_vector_image
 }
@@ -78,7 +68,7 @@ resource "yandex_compute_instance" "platform_vector" {
     preemptible = var.vm_vector_preemptible
   }
   network_interface {
-    subnet_id = yandex_vpc_subnet.develop_b.id
+    subnet_id = yandex_vpc_subnet.develop.id
     nat       = true
   }
 

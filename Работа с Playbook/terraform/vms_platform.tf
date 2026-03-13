@@ -2,7 +2,7 @@
 
 variable "vm_clickhouse_image" {
   type    = string
-  default = "ubuntu-2004-lts"
+  default = "centos-7"
 }
 
 variable "vm_clickhouse_name" {
@@ -45,7 +45,7 @@ variable "vm_vector_image" {
 
 variable "vm_vector_name" {
   type    = string
-  default = "netology-develop-platform-db"
+  default = "netology-vector"
 }
 
 variable "vm_vector_platform_id" {
