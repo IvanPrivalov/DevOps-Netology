@@ -1,119 +1,50 @@
 ---
-- name: Install Nginx
-  hosts: lighthous
-  become: true
-  handlers:
-    - name: Start-nginx
-      become: true
-      ansible.builtin.service:
-        name: nginx
-        state: restarted
-    - name: Reload-nginx
-      become: true
-      ansible.builtin.service:
-        name: nginx
-        state: reloaded
-  tasks:
-    - name: NGINX | Install epel-release
-      become: true
-      ansible.builtin.yum:
-        name: epel-release
-        state: present
-    - name: NGINX | Install nginx
-      become: true
-      ansible.builtin.yum:
-        name: nginx
-        state: present
-      notify: Start-nginx
-    - name: NGINX | Create general nginx
-      become: true
-      ansible.builtin.template:
-        src: templates/nginx.conf.j2
-        dest: /etc/nginx/nginx.conf
-        mode: "0644"
-      notify: Reload-nginx
-
-- name: Install lighthous
-  hosts: lighthous
-  become: true
-  handlers:
-    - name: Reload-nginx
-      become: true
-      ansible.builtin.service:
-        name: nginx
-        state: reloaded
-  tasks:
-    - name: Create LightHouse install directory
-      ansible.builtin.file:
-        path: "{{ lighthouse_install_dir }}"
-        state: directory
-        mode: "0755"
-      check_mode: false
-    - name: Download LightHouse archive
-      ansible.builtin.get_url:
-        url: "{{ lighthouse_download_url }}"
-        dest: "/tmp/{{ lighthouse_archive }}"
-        mode: "0644"
-      check_mode: false
-    - name: Extract LightHouse archive
-      ansible.builtin.unarchive:
-        src: "/tmp/{{ lighthouse_archive }}"
-        dest: "{{ lighthouse_install_dir }}"
-        remote_src: true
-        creates: "{{ lighthouse_install_dir }}/{{ lighthouse_archive_dir }}"
-      check_mode: false
-    - name: Deploy nginx config for LightHouse
-      ansible.builtin.template:
-        src: lighthouse.conf.j2
-        dest: /etc/nginx/conf.d/lighthouse.conf
-        mode: "0644"
-      notify: Restart nginx
-    - name: Enable and start nginx
-      ansible.builtin.service:
-        name: nginx
-        enabled: true
-        state: started
-      when: not ansible_check_mode
-
 - name: Install Clickhouse
   hosts: clickhouse
   become: true
 
   handlers:
-    - name: Start clickhouse service
-      become: true
+    - name: Restart clickhouse
       ansible.builtin.service:
         name: clickhouse-server
         state: restarted
+      when: not ansible_check_mode
+
   tasks:
 
-    - name: Get clickhouse distrib
-      ansible.builtin.get_url:
-        url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.noarch.rpm"
-        dest: "./{{ item }}-{{ clickhouse_version }}.rpm"
-        mode: "0755"
-      with_items: "{{ clickhouse_packages }}"
-
-    - name: Get clickhouse distrib
-      ansible.builtin.get_url:
-        url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
-        dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
-        mode: "0755"
-
-    - name: Install clickhouse packages
-      become: true
-      ansible.builtin.yum:
+    - name: Install repo dependencies
+      ansible.builtin.apt:
         name:
-          - clickhouse-common-static-{{ clickhouse_version }}.rpm
-          - clickhouse-client-{{ clickhouse_version }}.rpm
-          - clickhouse-server-{{ clickhouse_version }}.rpm
-      notify: Start clickhouse service
+          - ca-certificates
+          - gnupg
+        state: present
+        update_cache: true
+
+    - name: Add ClickHouse repository
+      ansible.builtin.apt_repository:
+        repo: "deb [trusted=yes] https://packages.clickhouse.com/deb stable main"
+        filename: clickhouse
+        state: present
+      check_mode: false
+
+    - name: Update apt cache after adding ClickHouse repo
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      check_mode: false
+
+    - name: Install ClickHouse packages
+      ansible.builtin.apt:
+        name: "{{ clickhouse_packages }}"
+        state: present
+        update_cache: true
+      notify: Restart clickhouse
 
     - name: Flush handlers
-      ansible.legacy.meta: flush_handlers
+      ansible.builtin.meta: flush_handlers
 
-    - name: Create database
-      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
+    - name: Create logs database
+      ansible.builtin.command: clickhouse-client -q "create database logs;"
       register: create_db
       failed_when: create_db.rc != 0 and create_db.rc != 82
       changed_when: create_db.rc == 0
@@ -140,7 +71,6 @@
         state: directory
         mode: "0755"
       check_mode: false
-      tags: install
 
     - name: Create vector config directory
       ansible.builtin.file:
@@ -148,14 +78,13 @@
         state: directory
         mode: "0755"
       check_mode: false
-      tags: install
 
     - name: Download vector archive
       ansible.builtin.get_url:
         url: "{{ vector_download_url }}"
         dest: "/tmp/{{ vector_archive }}"
         mode: "0644"
-      tags: install
+      check_mode: false
 
     - name: Extract vector archive
       ansible.builtin.unarchive:
@@ -163,7 +92,7 @@
         dest: "{{ vector_install_dir }}"
         remote_src: true
         creates: "{{ vector_install_dir }}/vector-{{ vector_version }}-x86_64-unknown-linux-gnu"
-      tags: install
+      check_mode: false
 
     - name: Create symlink to vector binary
       ansible.builtin.file:
@@ -171,7 +100,6 @@
         dest: /usr/bin/vector
         state: link
         force: true
-      tags: install
 
     - name: Deploy vector config
       ansible.builtin.template:
@@ -179,7 +107,6 @@
         dest: "{{ vector_config_dir }}/vector.toml"
         mode: "0644"
       notify: Restart vector
-      tags: config
 
     - name: Create systemd service file
       ansible.builtin.copy:
@@ -201,10 +128,70 @@
       notify:
         - Reload systemd
         - Restart vector
-      tags: service
+      check_mode: false
 
     - name: Enable and start vector
       ansible.builtin.service:
         name: vector
         enabled: true
         state: started
+      when: not ansible_check_mode
+
+- name: Install and configure LightHouse
+  hosts: lighthouse
+  become: true
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+      when: not ansible_check_mode
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Create LightHouse install directory
+      ansible.builtin.file:
+        path: "{{ lighthouse_install_dir }}"
+        state: directory
+        mode: "0755"
+      check_mode: false
+
+    - name: Download LightHouse archive
+      ansible.builtin.get_url:
+        url: "{{ lighthouse_download_url }}"
+        dest: "/tmp/{{ lighthouse_archive }}"
+        mode: "0644"
+      check_mode: false
+
+    - name: Extract LightHouse archive
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ lighthouse_archive }}"
+        dest: "{{ lighthouse_install_dir }}"
+        remote_src: true
+        creates: "{{ lighthouse_install_dir }}/{{ lighthouse_archive_dir }}"
+      check_mode: false
+
+    - name: Remove default nginx site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Deploy nginx config for LightHouse
+      ansible.builtin.template:
+        src: lighthouse.conf.j2
+        dest: /etc/nginx/conf.d/lighthouse.conf
+        mode: "0644"
+      notify: Restart nginx
+
+    - name: Enable and start nginx
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: started
+      when: not ansible_check_mode

@@ -2,21 +2,21 @@
   clickhouse:
     hosts:
       clickhouse-01:
-        ansible_host: 158.160.193.72
-        ansible_user: centos
+        ansible_host: 158.160.235.94
+        ansible_user: ubuntu
         ansible_ssh_private_key_file: ~/.ssh/id_rsa.pub
         ansible_ssh_common_args: '-o IdentitiesOnly=yes'
   vector:
     hosts:
       vector-01:
-        ansible_host: 158.160.229.134
-        ansible_user: centos
+        ansible_host: 158.160.207.72
+        ansible_user: ubuntu
         ansible_ssh_private_key_file: ~/.ssh/id_rsa.pub
         ansible_ssh_common_args: '-o IdentitiesOnly=yes'
-  lighthous:
+  lighthouse:
     hosts:
-      lighthous-01:
-        ansible_host: 158.160.229.134
-        ansible_user: centos
+      lighthouse-01:
+        ansible_host: 158.160.206.44
+        ansible_user: ubuntu
         ansible_ssh_private_key_file: ~/.ssh/id_rsa.pub
         ansible_ssh_common_args: '-o IdentitiesOnly=yes'

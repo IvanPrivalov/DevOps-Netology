@@ -1,27 +1,77 @@
-# Домашнее задание к занятию 3 «Использование Ansible»
+# Playbook: ClickHouse, Vector, LightHouse
 
-## Подготовка к выполнению
+## Что делает playbook
 
-1. Подготовьте в Yandex Cloud три хоста: для `clickhouse`, для `vector` и для `lighthouse`.
-2. Репозиторий LightHouse находится [по ссылке](https://github.com/VKCOM/lighthouse).
+Playbook разворачивает три сервиса на разных группах хостов:
 
-## Основная часть
+- **ClickHouse**: добавляет репозиторий, устанавливает пакеты, перезапускает сервис, создаёт БД `logs`.
+- **Vector**: скачивает и распаковывает архив, создаёт конфиг из шаблона, ставит systemd‑сервис и запускает.
+- **LightHouse**: скачивает статику, настраивает nginx для отдачи UI и запускает веб‑сервер.
 
-1. Допишите playbook: нужно сделать ещё один play, который устанавливает и настраивает LightHouse.
-2. При создании tasks рекомендую использовать модули: `get_url`, `template`, `yum`, `apt`.
-3. Tasks должны: скачать статику LightHouse, установить Nginx или любой другой веб-сервер, настроить его конфиг для открытия LightHouse, запустить веб-сервер.
-4. Подготовьте свой inventory-файл `prod.yml`.
-5. Запустите `ansible-lint site.yml` и исправьте ошибки, если они есть.
-6. Попробуйте запустить playbook на этом окружении с флагом `--check`.
-7. Запустите playbook на `prod.yml` окружении с флагом `--diff`. Убедитесь, что изменения на системе произведены.
-8. Повторно запустите playbook с флагом `--diff` и убедитесь, что playbook идемпотентен.
-9. Подготовьте README.md-файл по своему playbook. В нём должно быть описано: что делает playbook, какие у него есть параметры и теги.
-10. Готовый playbook выложите в свой репозиторий, поставьте тег `08-ansible-03-yandex` на фиксирующий коммит, в ответ предоставьте ссылку на него.
+## Инвентори
 
----
+Файл: `playbook/inventory/prod.yml`
 
-### Как оформить решение задания
+Группы хостов:
 
-Выполненное домашнее задание пришлите в виде ссылки на .md-файл в вашем репозитории.
+- `clickhouse`
+- `vector`
+- `lighthouse`
 
----
+## Параметры (переменные)
+
+ClickHouse (`playbook/group_vars/clickhouse/vars.yml`):
+
+- `clickhouse_version`
+- `clickhouse_packages`
+
+Vector (`playbook/group_vars/vector/vars.yml`):
+
+- `vector_version`
+- `vector_install_dir`
+- `vector_config_dir`
+- `vector_archive`
+- `vector_download_url`
+
+LightHouse (`playbook/group_vars/lighthouse/vars.yml`):
+
+- `lighthouse_version`
+- `lighthouse_repo`
+- `lighthouse_archive`
+- `lighthouse_download_url`
+- `lighthouse_install_dir`
+- `lighthouse_archive_dir`
+
+## Запуск
+
+Проверка кода:
+
+```bash
+ansible-lint site.yml
+```
+
+<img src="screens\1.png" alt="Alt text" title="1">
+
+Проверка без изменений:
+
+```bash
+ansible-playbook -i inventory/prod.yml site.yml --check
+```
+
+<img src="screens\2.png" alt="Alt text" title="2">
+
+Применение с diff:
+
+```bash
+ansible-playbook -i inventory/prod.yml site.yml --diff
+```
+
+<img src="screens\3.png" alt="Alt text" title="3">
+
+Проверка идемпотентности:
+
+```bash
+ansible-playbook -i inventory/prod.yml site.yml --diff
+```
+
+<img src="screens\4.png" alt="Alt text" title="4">
