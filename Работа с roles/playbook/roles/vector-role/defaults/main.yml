@@ -1,0 +1,10 @@
+---
+vector_version: "0.38.0"
+vector_install_dir: "/opt/vector"
+vector_config_dir: "/etc/vector"
+vector_data_dir: "/var/lib/vector"
+vector_archive: "vector-{{ vector_version }}-x86_64-unknown-linux-gnu.tar.gz"
+vector_download_url: "https://packages.timber.io/vector/{{ vector_version }}/{{ vector_archive }}"
+vector_extract_dir: "{{ vector_install_dir }}/vector-{{ vector_version }}-x86_64-unknown-linux-gnu"
+vector_symlink_path: "/usr/bin/vector"
+vector_manage_service: true

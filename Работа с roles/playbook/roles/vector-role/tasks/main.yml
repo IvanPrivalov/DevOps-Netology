@@ -1,0 +1,68 @@
+---
+- name: Create vector install directory
+  ansible.builtin.file:
+    path: "{{ vector_install_dir }}"
+    state: directory
+    mode: "0755"
+  check_mode: false
+
+- name: Create vector config directory
+  ansible.builtin.file:
+    path: "{{ vector_config_dir }}"
+    state: directory
+    mode: "0755"
+  check_mode: false
+
+- name: Create vector data directory
+  ansible.builtin.file:
+    path: "{{ vector_data_dir }}"
+    state: directory
+    mode: "0755"
+  check_mode: false
+
+- name: Download vector archive
+  ansible.builtin.get_url:
+    url: "{{ vector_download_url }}"
+    dest: "/tmp/{{ vector_archive }}"
+    mode: "0644"
+  check_mode: false
+
+- name: Extract vector archive
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ vector_archive }}"
+    dest: "{{ vector_install_dir }}"
+    remote_src: true
+    creates: "{{ vector_extract_dir }}"
+  check_mode: false
+
+- name: Create symlink to vector binary
+  ansible.builtin.file:
+    src: "{{ vector_install_dir }}/vector-x86_64-unknown-linux-gnu/bin/vector"
+    dest: "{{ vector_symlink_path }}"
+    state: link
+    force: true
+
+- name: Deploy vector config
+  ansible.builtin.template:
+    src: vector.toml.j2
+    dest: "{{ vector_config_dir }}/vector.toml"
+    mode: "0644"
+  notify: Restart vector
+
+- name: Deploy systemd service file
+  ansible.builtin.template:
+    src: vector.service.j2
+    dest: /etc/systemd/system/vector.service
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart vector
+  check_mode: false
+  when: vector_manage_service | bool
+
+- name: Enable and start vector
+  ansible.builtin.service:
+    name: vector
+    enabled: true
+    state: started
+  when: (not ansible_check_mode) and (vector_manage_service | bool)

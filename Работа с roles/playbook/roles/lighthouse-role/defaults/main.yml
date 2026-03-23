@@ -1,0 +1,10 @@
+---
+lighthouse_version: "master"
+lighthouse_repo: "https://github.com/VKCOM/lighthouse"
+lighthouse_archive: "lighthouse-{{ lighthouse_version }}.tar.gz"
+lighthouse_download_url: "{{ lighthouse_repo }}/archive/refs/heads/{{ lighthouse_version }}.tar.gz"
+lighthouse_install_dir: "/opt/lighthouse"
+lighthouse_archive_dir: "lighthouse-{{ lighthouse_version }}"
+lighthouse_listen_port: 80
+lighthouse_server_name: "_"
+lighthouse_nginx_conf_path: "/etc/nginx/conf.d/lighthouse.conf"

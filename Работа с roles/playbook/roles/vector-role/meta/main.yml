@@ -1,0 +1,20 @@
+galaxy_info:
+  author: IvanPrivalov
+  namespace: ivan_privalov
+  role_name: vector
+  description: Install and configure Vector
+  company: personal
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "22.04"
+    - name: Debian
+      versions:
+        - "11"
+  galaxy_tags:
+    - vector
+    - logging
+    - observability
+    - agent

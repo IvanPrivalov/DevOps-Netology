@@ -1,39 +1,43 @@
 # Playbook: ClickHouse, Vector, LightHouse
 
-## Что делает playbook
+## Описание
 
-Playbook разворачивает три сервиса на разных группах хостов:
+Репозиторий содержит playbook, который разворачивает:
 
-- **ClickHouse**: добавляет репозиторий, устанавливает пакеты, перезапускает сервис, создаёт БД `logs`.
-- **Vector**: скачивает и распаковывает архив, создаёт конфиг из шаблона, ставит systemd‑сервис и запускает.
-- **LightHouse**: скачивает статику, настраивает nginx для отдачи UI и запускает веб‑сервер.
+- ClickHouse через роль `clickhouse` (из ansible-galaxy)
+- Vector через роль `vector-role`
+- LightHouse через роль `lighthouse-role`
 
-## Инвентори
+## Роли
 
-Файл: `playbook/inventory/prod.yml`
+### ClickHouse
 
-Группы хостов:
+Источник: `git@github.com:AlexeySetevoi/ansible-clickhouse.git` (версия `1.13`)
 
-- `clickhouse`
-- `vector`
-- `lighthouse`
-
-## Параметры (переменные)
-
-ClickHouse (`playbook/group_vars/clickhouse/vars.yml`):
+Переменные роли задаются в `playbook/group_vars/clickhouse/vars.yml`:
 
 - `clickhouse_version`
 - `clickhouse_packages`
 
-Vector (`playbook/group_vars/vector/vars.yml`):
+### Vector
+
+Репозиторий: `https://github.com/IvanPrivalov/vector-role`
+
+Переменные роли:
 
 - `vector_version`
 - `vector_install_dir`
 - `vector_config_dir`
 - `vector_archive`
 - `vector_download_url`
+- `vector_extract_dir`
+- `vector_symlink_path`
 
-LightHouse (`playbook/group_vars/lighthouse/vars.yml`):
+### LightHouse
+
+Репозиторий: `https://github.com/IvanPrivalov/lighthouse-role`
+
+Переменные роли:
 
 - `lighthouse_version`
 - `lighthouse_repo`
@@ -41,37 +45,20 @@ LightHouse (`playbook/group_vars/lighthouse/vars.yml`):
 - `lighthouse_download_url`
 - `lighthouse_install_dir`
 - `lighthouse_archive_dir`
+- `lighthouse_listen_port`
+- `lighthouse_server_name`
+- `lighthouse_nginx_conf_path`
+
+## Установка ролей
+
+```bash
+cd playbook
+ansible-galaxy role install -r requirements.yml -p ./roles
+```
 
 ## Запуск
 
-Проверка кода:
-
-```bash
-ansible-lint site.yml
-```
-
-<img src="screens\1.png" alt="Alt text" title="1">
-
-Проверка без изменений:
-
 ```bash
 ansible-playbook -i inventory/prod.yml site.yml --check
-```
-
-<img src="screens\2.png" alt="Alt text" title="2">
-
-Применение с diff:
-
-```bash
 ansible-playbook -i inventory/prod.yml site.yml --diff
 ```
-
-<img src="screens\3.png" alt="Alt text" title="3">
-
-Проверка идемпотентности:
-
-```bash
-ansible-playbook -i inventory/prod.yml site.yml --diff
-```
-
-<img src="screens\4.png" alt="Alt text" title="4">

@@ -1,0 +1,11 @@
+---
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: vector_manage_service | bool
+
+- name: Restart vector
+  ansible.builtin.service:
+    name: vector
+    state: restarted
+  when: vector_manage_service | bool

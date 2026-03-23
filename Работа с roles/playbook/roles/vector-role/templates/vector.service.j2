@@ -1,0 +1,12 @@
+[Unit]
+Description=Vector Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ vector_symlink_path }} --config {{ vector_config_dir }}/vector.toml
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

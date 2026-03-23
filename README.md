@@ -11,4 +11,4 @@
 7. [Домашнее задание к занятию 1 «Введение в Ansible»](https://github.com/IvanPrivalov/DevOps-Netology/tree/main/%D0%92%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%B2%20Ansible)
 8. [Домашнее задание к занятию 2 «Работа с Playbook»](https://github.com/IvanPrivalov/DevOps-Netology/tree/main/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%20%D1%81%20Playbook)
 9. [Домашнее задание к занятию 3 «Использование Ansible»](https://github.com/IvanPrivalov/DevOps-Netology/tree/main/%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20Ansible)
-10. [Домашнее задание к занятию 4 «Работа с roles»]()
+10. [Домашнее задание к занятию 4 «Работа с roles»](https://github.com/IvanPrivalov/DevOps-Netology/tree/main/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%20%D1%81%20roles)
