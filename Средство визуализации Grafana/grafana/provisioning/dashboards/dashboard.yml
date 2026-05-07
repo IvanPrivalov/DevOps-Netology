@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: node-exporter
+    orgId: 1
+    folder: Homework 14
+    type: file
+    disableDeletion: false
+    editable: false
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards
